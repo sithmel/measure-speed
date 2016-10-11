@@ -18,7 +18,7 @@ The options are:
 * samples: the number of executions (default 100)
 * discard: how many maximum an minimum timings we want to discard (default 1)
 
-measureSpeedSyncAsyncCB
+measureSpeedAsyncCB
 =======================
 You can use this to measure the speed of asynchronous functions (callback based).
 This function takes as arguments a function, an object (options) and a callback.
@@ -37,7 +37,7 @@ function (err, ms) {
 ```
 The options are:
 * samples: the number of executions (default 100)
-* discard: how many maximum an minimum timings we want to discard (default 1)
+* discard: how many maximum and minimum timings we want to discard (default 1)
 * runParallel: if we want to run the functions in parallel (default false)
 
 measureSpeedAsyncPromise
@@ -59,5 +59,5 @@ function (err, ms) {
 ```
 The options are:
 * samples: the number of executions (default 100)
-* discard: how many maximum an minimum timings we want to discard (default 1)
+* discard: how many maximum and minimum timings we want to discard (default 1)
 * runParallel: if we want to run the functions in parallel (default false)
