@@ -1,0 +1,34 @@
+{
+  "name": "measure-speed",
+  "version": "0.0.1",
+  "description": "Measure speed of sync/async functions",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha tests/**/*.js",
+    "watch": "npm run test -- -w",
+    "lint": "./node_modules/.bin/eslint --ext .js ./src ./tests",
+    "release:major": "./node_modules/.bin/npm-release major",
+    "release:minor": "./node_modules/.bin/npm-release minor",
+    "release:patch": "./node_modules/.bin/npm-release patch",
+    "precommit": "npm run lint",
+    "prepush": "npm run test"
+  },
+  "keywords": [
+    "iterators",
+    "itertools",
+    "generators"
+  ],
+  "repository": "git@github.com:sithmel/measure-speed.git",
+  "author": "Maurizio Lupo <maurizio.lupo@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "require-all": "^2.0.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "eslint": "^3.6.1",
+    "husky": "^0.11.8",
+    "mocha": "^3.1.0",
+    "npm-release": "^1.0.0"
+  }
+}
