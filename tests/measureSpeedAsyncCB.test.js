@@ -29,4 +29,16 @@ describe('measureSpeedAsyncCB', function () {
       done();
     });
   });
+
+  it('returns a number (parallel async)', function (done) {
+    var ms = measureSpeedAsyncCB(function (err, cb) {
+      setTimeout(function () {
+        cb(null);
+      }, 50);
+    }, { samples: 1000, runParallel: true },
+    function (err, ms) {
+      assert.typeOf(ms, 'number');
+      done();
+    });
+  });
 });
