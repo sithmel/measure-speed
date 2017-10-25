@@ -4,6 +4,8 @@ var waterfall = require('async-deco/callback/waterfall');
 var parallel = require('async-deco/callback/parallel');
 var addLogger = require('async-deco/utils/add-logger');
 var logDecorator = require('async-deco/callback/log');
+var now = require('performance-now');
+
 
 function getHeap() {
   return new MinMaxHeap(function (a, b) {
@@ -33,12 +35,12 @@ Stats.prototype.discard = function (n) {
 };
 
 Stats.prototype.start = function (id) {
-  this.events[id] = Date.now();
+  this.events[id] = now();
 };
 
 Stats.prototype.end = function (id) {
   if (id in this.events) {
-    this.data.push(Date.now() - this.events[id]);
+    this.data.push(now() - this.events[id]);
     delete this.events[id];
   }
 };

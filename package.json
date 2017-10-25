@@ -24,6 +24,7 @@
   "dependencies": {
     "async-deco": "^8.3.0",
     "little-ds-toolkit": "^0.4.0",
+    "performance-now": "^2.1.0",
     "require-all": "^2.0.0"
   },
   "devDependencies": {
