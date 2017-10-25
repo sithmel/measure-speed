@@ -1,6 +1,6 @@
 {
   "name": "measure-speed",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Measure speed of sync/async functions",
   "main": "index.js",
   "scripts": {
