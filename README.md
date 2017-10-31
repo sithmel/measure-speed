@@ -1,63 +1,48 @@
 measure-speed
 =============
-This is a very simple module for measuring the average or median speed of functions.
+This is a module for measuring the average or median speed of functions.
 
-measureSpeedSync
-================
-This function takes as arguments a function and an object (options).
-It returns the average running time of the function in ms.
+measureSpeed
+============
+This function takes as arguments a function, options object and a callback.
+The callback is called with the error (null if everything is ok) and a number of milliseconds.
 ```js
-var measureSpeedSync = require('measure-speed').measureSpeedSync;
+var measureSpeedSync = require('measure-speed');
 
-var ms = measureSpeedSync(function () {
-  var a = [2, 5, 6, 3, 7, 9, 2, 3, 5, 6, 34, 234, 5, 23, 523, 4, 5, 23, 4, 5, 23, 4, 5, 2, 34];
-  a.sort();
-}, { samples: 1000 });
-```
-The options are:
-* samples: the number of executions (default 100)
-* discard: how many maximum an minimum timings we want to discard (default 1)
-
-measureSpeedAsyncCB
-=======================
-You can use this to measure the speed of asynchronous functions (callback based).
-This function takes as arguments a function, an object (options) and a callback.
-It calls the callback with the average running time of the function in ms.
-```js
-var measureSpeedAsyncCB = require('measure-speed').measureSpeedAsyncCB;
-
-measureSpeedAsyncCB(function () {
+measureSpeedSync(function () {
   var a = [2, 5, 6, 3, 7, 9, 2, 3, 5, 6, 34, 234, 5, 23, 523, 4, 5, 23, 4, 5, 23, 4, 5, 2, 34];
   a.sort();
 },
 { samples: 1000 },
 function (err, ms) {
-  ...
+  // ms is the number of milliseconds. The resolution is in microseconds
 });
 ```
+The function runs a certain number of times (default 100), every run is timed, the timings are sorted and the biggest and smallest values are removed.
+The result is the average of the remainings.
 The options are:
 * samples: the number of executions (default 100)
 * discard: how many maximum and minimum timings we want to discard (default 1)
-* runParallel: if we want to run the functions in parallel (default false)
 
-measureSpeedAsyncPromise
-========================
-You can use this to measure the speed of asynchronous functions (promise based).
-This function takes as arguments a function, an object (options) and a callback.
-It calls the callback with the average running time of the function in ms.
+Measure speed works also if the function returns a promise.
 ```js
-var measureSpeedAsyncPromise = require('measure-speed').measureSpeedAsyncPromise;
-
-measureSpeedAsyncPromise(function () {
-  var a = [2, 5, 6, 3, 7, 9, 2, 3, 5, 6, 34, 234, 5, 23, 523, 4, 5, 23, 4, 5, 23, 4, 5, 2, 34];
-  a.sort();
+measureSpeedSync(function () {
+  return Promise(function (resolve, reject) {
+    setTimeout(resolve, 100);
+  });
 },
 { samples: 1000 },
 function (err, ms) {
-  ...
+  // ms is the number of milliseconds. The resolution is in microseconds
 });
 ```
-The options are:
-* samples: the number of executions (default 100)
-* discard: how many maximum and minimum timings we want to discard (default 1)
-* runParallel: if we want to run the functions in parallel (default false)
+Or a callback
+```js
+measureSpeedSync(function (callback) {
+  myfunc(callback);
+},
+{ samples: 1000 },
+function (err, ms) {
+  // ms is the number of milliseconds. The resolution is in microseconds
+});
+```

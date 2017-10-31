@@ -1,9 +1,6 @@
 var MinMaxHeap = require('little-ds-toolkit/lib/min-max-heap');
-var callbackify = require('async-deco/utils/callbackify');
-var waterfall = require('async-deco/callback/waterfall');
-var parallel = require('async-deco/callback/parallel');
-var addLogger = require('async-deco/utils/add-logger');
-var logDecorator = require('async-deco/callback/log');
+var waterfall = require('./waterfall');
+var wrapStartEnd = require('./wrapStartEnd');
 var now = require('performance-now');
 
 
@@ -29,8 +26,6 @@ Stats.prototype.discard = function (n) {
       this.data.popMin();
       this.data.popMax();
     }
-  } else {
-    this.data = getHeap();
   }
 };
 
@@ -45,47 +40,54 @@ Stats.prototype.end = function (id) {
   }
 };
 
-function measureSpeedSync(func, opts) {
-  opts = opts || {};
-  var samples = opts.samples || 100;
-  var discard = opts.discard || 1;
-  var stats = new Stats();
-  for (var i = 0; i < samples; i++) {
-    stats.start(i);
-    func();
-    stats.end(i);
-  }
-  stats.discard(discard);
-  return stats.average();
+function wrapSyncFunc(func) {
+  return function (done) {
+    var out;
+    try {
+      out = func();
+    } catch (e) {
+      return done(e);
+    }
+
+    if (out && 'then' in out) {
+      out
+        .then(done)
+        .catch(done);
+    } else {
+      done();
+    }
+  };
 }
 
-function measureSpeedAsyncCB(func, opts, cb) {
+function wrapAsyncFunc(func) {
+  return function (done) {
+    func(done);
+  };
+}
+
+function measureSpeed(func, opts, cb) {
   opts = opts || {};
   var samples = opts.samples || 100;
   var discard = opts.discard || 1;
-  var runParallel = opts.runParallel || false;
-
+  func = func.length === 0 ? wrapSyncFunc(func) : wrapAsyncFunc(func);
   var stats = new Stats();
-  var addLogs = logDecorator();
 
   var functions = [];
   for (var i = 0; i < samples; i++) {
     functions.push((function (index) {
-      var logger = addLogger(function (event, payload, ts) {
-        if (event === 'log-start') {
-          stats.start(index);
-        }
-        if (event === 'log-end') {
-          stats.end(index);
-        }
+      var decorator = wrapStartEnd(function () {
+        stats.start(index);
+      },
+      function () {
+        stats.end(index);
       });
-      return logger(addLogs(func));
+      return decorator(func);
     }(i)));
   }
 
-  var composedFunc = runParallel ? parallel(functions) : waterfall(functions);
+  var composedFunc = waterfall(functions);
 
-  composedFunc(null, function (err) {
+  composedFunc(function (err) {
     if (err) {
       return cb(err);
     }
@@ -94,12 +96,9 @@ function measureSpeedAsyncCB(func, opts, cb) {
   });
 }
 
-function measureSpeedAsyncPromise(func, opts, cb) {
-  return measureSpeedAsyncCB(callbackify(func), opts, cb);
-}
+// function measureSpeedCompare(funcArray, options, cb) {
+//   var composedFunc = waterfall(functions);
+//
+// }
 
-module.exports = {
-  measureSpeedSync: measureSpeedSync,
-  measureSpeedAsyncCB: measureSpeedAsyncCB,
-  measureSpeedAsyncPromise: measureSpeedAsyncPromise
-};
+module.exports = measureSpeed;

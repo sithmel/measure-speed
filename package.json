@@ -22,16 +22,15 @@
   "author": "Maurizio Lupo <maurizio.lupo@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "async-deco": "^8.3.0",
     "little-ds-toolkit": "^0.4.0",
-    "performance-now": "^2.1.0",
-    "require-all": "^2.0.0"
+    "performance-now": "^2.1.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
     "eslint": "^3.6.1",
     "husky": "^0.11.8",
     "mocha": "^3.1.0",
-    "npm-release": "^1.0.0"
+    "npm-release": "^1.0.0",
+    "setimmediate": "^1.0.5"
   }
 }
