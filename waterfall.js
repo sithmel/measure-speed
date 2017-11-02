@@ -1,3 +1,5 @@
+require('setimmediate');
+
 function waterfall(funcs) {
 
   return function _waterfall(cb) {
@@ -14,7 +16,9 @@ function waterfall(funcs) {
         return cb(null, results);
       }
       currentFunc = functions.shift();
-      currentFunc(callback);
+      setImmediate(function () {
+        currentFunc(callback);        
+      });
     }
     currentFunc = functions.shift();
     currentFunc(callback);

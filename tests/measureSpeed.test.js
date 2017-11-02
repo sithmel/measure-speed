@@ -1,6 +1,5 @@
 var assert = require('chai').assert;
 var measureSpeed = require('../');
-require('setimmediate');
 
 describe('measureSpeed', function () {
   it('is a function', function () {
@@ -30,7 +29,7 @@ describe('measureSpeed', function () {
     measureSpeed(function (cb) {
       var a = [2, 5, 6, 3, 7, 9, 2, 3, 5, 6, 34, 234, 5, 23, 523, 4, 5, 23, 4, 5, 23, 4, 5, 2, 34];
       a.sort();
-      setImmediate(cb);
+      cb();
     }, { samples: 1000 },
     function (err, ms) {
       assert.typeOf(ms, 'number');
@@ -40,7 +39,7 @@ describe('measureSpeed', function () {
 
   it('measure an empty async func', function (done) {
     measureSpeed(function (cb) {
-      setImmediate(cb);
+      cb();
     }, { samples: 1000 },
     function (err, ms) {
       assert.typeOf(ms, 'number');

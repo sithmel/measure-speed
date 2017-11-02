@@ -65,15 +65,23 @@ function wrapAsyncFunc(func) {
   };
 }
 
+function normalizeFunc(func) {
+  if (!func) return;
+  return func.length === 0 ? wrapSyncFunc(func) : wrapAsyncFunc(func);
+}
+
 function measureSpeed(func, opts, cb) {
   opts = opts || {};
   var samples = opts.samples || 100;
   var discard = opts.discard || 1;
-  func = func.length === 0 ? wrapSyncFunc(func) : wrapAsyncFunc(func);
+  func = normalizeFunc(func);
+  setup = normalizeFunc(opts.setup);
+  tearDown = normalizeFunc(opts.tearDown);
   var stats = new Stats();
 
   var functions = [];
   for (var i = 0; i < samples; i++) {
+    setup && functions.push(setup);
     functions.push((function (index) {
       var decorator = wrapStartEnd(function () {
         stats.start(index);
@@ -83,6 +91,7 @@ function measureSpeed(func, opts, cb) {
       });
       return decorator(func);
     }(i)));
+    tearDown && functions.push(tearDown);
   }
 
   var composedFunc = waterfall(functions);
@@ -95,10 +104,5 @@ function measureSpeed(func, opts, cb) {
     cb(null, stats.average());
   });
 }
-
-// function measureSpeedCompare(funcArray, options, cb) {
-//   var composedFunc = waterfall(functions);
-//
-// }
 
 module.exports = measureSpeed;
